@@ -157,3 +157,15 @@ Properties reference:
 ## Issues
 
 Please report [here](https://github.com/tan-tan-kanarek/vscode-venn/issues).
+
+## TODO
+
+* Export as HTML
+* Export as image
+* Reference item to group in a different diagram
+* CSS Style
+  * Global
+  * Per chart
+  * Per group
+  * Per list
+  * Per item
