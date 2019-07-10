@@ -239,7 +239,7 @@ class VennPreview {
 	});
 </script>
 </html>`;
-			fs.writeFileSync('C:/opt/venn/test.html', this.panel.webview.html);
+			// fs.writeFileSync('C:/opt/venn/test.html', this.panel.webview.html);
 		});
 	}
 }
