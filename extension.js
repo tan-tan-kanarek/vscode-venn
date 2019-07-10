@@ -82,67 +82,75 @@ class VennPreview {
 			}
 
 			var hasErrors = false;
-			if(!config.groups) {
-				vscode.window.showErrorMessage('Venn: missing groups property');
-				hasErrors = true;
-			}			
-			else if(typeof config.groups !== 'object') {
+			if(config.groups && typeof config.groups !== 'object') {
 				vscode.window.showErrorMessage('Venn: groups property must be an object');
 				hasErrors = true;
 			}
-			if(!config.items) {
-				vscode.window.showErrorMessage('Venn: missing items property');
+			if(config.charts) {
+				if(!Array.isArray(config.charts)) {
+					vscode.window.showErrorMessage('Venn: charts property must be an array');
+					hasErrors = true;
+				}
+			}
+			else if(!config.items) {
+				vscode.window.showErrorMessage('Venn: missing items or charts property');
 				hasErrors = true;
 			}			
 			else if(!Array.isArray(config.items)) {
 				vscode.window.showErrorMessage('Venn: items property must be an array');
 				hasErrors = true;
 			}
+			else {
+				config.charts = [{
+					name: 'deafult',
+					items: config.items
+				}];
+			}
 
-			config.sets = {};
-			for(var i = 0; i < config.items.length; i++) {
-				var item = config.items[i];
-				if(!item.name) {
-					vscode.window.showErrorMessage('Venn: item.name property is required');
-					hasErrors = true;
-					break;
-				}
-				if(!item.groups || !Array.isArray(item.groups) || !item.groups.length) {
-					vscode.window.showErrorMessage('Venn: item.groups must be a valid array with at least one value');
-					hasErrors = true;
-					break;
-				}
-				
-				var groupsCombinations = getAllCombinations(item.groups);
-				for(var j = 0; j < groupsCombinations.length; j++) {
-					var groups = groupsCombinations[j];
-					groups.sort();
-					var group = groups.join('_');
-
-					if(groups.length == 1 && !config.groups[group]) {
-						vscode.window.showErrorMessage(`Venn: group ${group} is not defined`);
+			var charts = config.charts.map(chart => {
+				var sets = {};
+				for(var i = 0; i < chart.items.length; i++) {
+					var item = chart.items[i];
+					if(!item.name) {
+						vscode.window.showErrorMessage('Venn: item.name property is required');
 						hasErrors = true;
 						break;
 					}
-					var groupNames = groups.map(g => config.groups[g].name || g);					
-					if(!config.sets[group]) {
-						config.sets[group] = {
-							sets: groupNames,
-							items: [],
-							size: 0
-						};
+					if(!item.groups || !Array.isArray(item.groups) || !item.groups.length) {
+						vscode.window.showErrorMessage('Venn: item.groups must be a valid array with at least one value');
+						hasErrors = true;
+						break;
 					}
-					config.sets[group].items.push(item);
-					config.sets[group].size++;
-				}
-			};
+					
+					var groupsCombinations = getAllCombinations(item.groups);
+					for(var j = 0; j < groupsCombinations.length; j++) {
+						var groups = groupsCombinations[j];
+						groups.sort();
+						var group = groups.join('_');
+
+						var groupNames = groups.map(g => config.groups && config.groups[g] && config.groups[g].name || g);
+						if(!sets[group]) {
+							sets[group] = {
+								chart: chart.name,
+								name: group,
+								sets: groupNames,
+								items: [],
+								size: 0
+							};
+						}
+						sets[group].items.push(item);
+						sets[group].size++;
+					}
+				};
+				return {
+					name: chart.name,
+					sets: Object.keys(sets).map(g => sets[g])
+				};
+			});
 			
 			if(hasErrors) {
 				return;
 			}
-
-			var sets = Object.keys(config.sets).map(g => config.sets[g]);
-			console.log(sets);
 
 			this.panel.webview.html = `<!doctype html>
 <html lang="en">
@@ -163,23 +171,26 @@ class VennPreview {
 </style>
 </head>
 <body>
-<div id="venn"></div>
-<div id="list"></div>
+<table id="charts">
+	<tr>${charts.map(chart => `<td><div id="venn-${chart.name}"></div><div id="list-${chart.name}"></div></td>`).join('')}</tr>
+</table>
 </body>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://benfred.github.io/venn.js/venn.js"></script>
 <script>
-	var sets = ${JSON.stringify(sets)};
-	var chart = venn.VennDiagram();
-	var div = d3.select("#venn")
-	div.datum(sets).call(chart);
+	var setsCharts = ${JSON.stringify(charts)};
+	var table = d3.select("#charts")
+	setsCharts.forEach(setsChart => {
+		var chart = venn.VennDiagram();
+		var div = d3.select("#venn-" + setsChart.name)
+		div.datum(setsChart.sets).call(chart);
 
-	// add a tooltip
-	var tooltip = d3.select("body").append("div")
-		.attr("class", "venntooltip");
+		// add a tooltip
+		var tooltip = d3.select("body").append("div")
+			.attr("class", "venntooltip");
 
-	// add listeners to all the groups to display tooltip on mouseover
-	div.selectAll("g")
+		// add listeners to all the groups to display tooltip on mouseover
+		div.selectAll("g")
 		.on("mouseover", function(d, i) {
 			// sort all the areas relative to the current item
 			venn.sortAreas(div, d);
@@ -213,11 +224,22 @@ class VennPreview {
 		})
 		
 		.on("click", function(d, i) {
-			var list = document.getElementById('list');
-			list.innerHTML = "<b>" + d.sets.join(", ") + "</b><br/><ul>" + d.items.map(item => "<li>" + item.name + "</li>").join("") + "</ul>";
+			var ds = table.selectAll('g[data-group="' + d.name + '"]');
+			ds.each(di => {
+				var list = document.getElementById('list-' + di.chart);
+				list.innerHTML = "<b>" + di.sets.join(", ") + "</b><br/><ul>" + di.items.map(item => "<li>" + item.name + "</li>").join("") + "</ul>";
+			});
+		})
+		
+		// add class
+		.each(function(d) {
+			this.dataset.chartName = setsChart.name;
+			this.dataset.group = d.name;
 		});
+	});
 </script>
 </html>`;
+			fs.writeFileSync('C:/opt/venn/test.html', this.panel.webview.html);
 		});
 	}
 }

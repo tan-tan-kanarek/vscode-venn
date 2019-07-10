@@ -2,7 +2,7 @@
 	"name": "venn",
 	"displayName": "Venn",
 	"description": "Venn Diagram Generator",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"publisher": "Tan-Tan",
 	"license": "MIT",
 	"engines": {
