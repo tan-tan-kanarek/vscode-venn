@@ -8,6 +8,7 @@ A javascript library for laying out area proportional venn and euler diagrams, b
   * Instance preview
   * Auto update
   * List items
+  * Zoom (Ctrl +/-)
 
 ## File Format
 

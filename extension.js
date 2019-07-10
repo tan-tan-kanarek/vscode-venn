@@ -153,7 +153,6 @@ class VennPreview {
 		position: absolute;
 		text-align: center;
 		width: 128px;
-		height: 16px;
 		background: #333;
 		color: #ddd;
 		padding: 2px;
@@ -199,7 +198,7 @@ class VennPreview {
 		})
 
 		.on("mousemove", function() {
-			tooltip.style("left", (d3.event.pageX) + "px")
+			tooltip.style("left", (d3.event.pageX + 10) + "px")
 				.style("top", (d3.event.pageY - 28) + "px");
 		})
 		
@@ -215,7 +214,7 @@ class VennPreview {
 		
 		.on("click", function(d, i) {
 			var list = document.getElementById('list');
-			list.innerHTML = "<ul>" + d.items.map(item => "<li>" + item.name + "</li>").join("") + "</ul>";
+			list.innerHTML = "<b>" + d.sets.join(", ") + "</b><br/><ul>" + d.items.map(item => "<li>" + item.name + "</li>").join("") + "</ul>";
 		});
 </script>
 </html>`;
