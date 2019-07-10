@@ -45,3 +45,7 @@ The following properties are required:
     ]
 }
 ```
+
+## Issues
+
+Please report [here](https://github.com/tan-tan-kanarek/vscode-venn/issues).
