@@ -8,6 +8,14 @@
 	"engines": {
 		"vscode": "^1.36.0"
 	},
+	"bugs": {
+	  "url": "https://github.com/tan-tan-kanarek/vscode-venn/issues"
+	},
+	"homepage": "https://github.com/tan-tan-kanarek/vscode-venn/blob/master/README.md",
+	"repository": {
+	  "type": "git",
+	  "url": "https://github.com/tan-tan-kanarek/vscode-venn.git"
+	},
 	"categories": [
 		"Programming Languages",
 		"Formatters",
