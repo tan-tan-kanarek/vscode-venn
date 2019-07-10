@@ -2,6 +2,11 @@
 
 A javascript library for laying out area proportional venn and euler diagrams, based on [venn.js](https://github.com/benfred/venn.js).
 
+## Known Limitation
+
+* Works online only
+
+
 ## Features
 
 * Preview Diagram
