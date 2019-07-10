@@ -1,0 +1,82 @@
+{
+	"name": "venn",
+	"displayName": "Venn",
+	"description": "Venn Diagram Generator",
+	"version": "1.0.0",
+	"publisher": "Tan-Tan",
+	"license": "MIT",
+	"engines": {
+		"vscode": "^1.36.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Formatters",
+		"Snippets",
+		"Other"
+	],
+	"activationEvents": [
+		"onLanguage:venn",
+		"onCommand:venn.preview"
+	],
+	"main": "./extension.js",
+	"contributes": {
+		"languages": [
+		  {
+			"id": "venn",
+			"extensions": [
+			  ".venn",
+			  ".vnn"
+			],
+			"aliases": [
+			  "Venn",
+			  "Venn.js"
+			],
+			"configuration": "./language-configuration.json"
+		  }
+		],
+		"grammars": [
+		  {
+			"language": "venn",
+			"scopeName": "source.venn",
+			"path": "./syntaxes/VENN.tmLanguage.json"
+		  }
+		],
+		"commands": [
+			{
+				"command": "venn.preview",
+				"title": "Preview",
+				"category": "Venn"
+			}
+		],
+		"menus": {
+		  "editor/context": [
+			{
+			  "when": "editorLangId == venn",
+			  "command": "venn.preview",
+			  "group": "Venn"
+			}
+		  ],
+		  "explorer/context": [
+			{
+				"when": "resourceLangId == venn",
+				"command": "venn.preview",
+				"group": "Venn"
+			}
+		  ]
+		}
+	},
+	"scripts": {
+		"test": "node ./test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^5.2.6",
+		"@types/node": "^10.12.21",
+		"@types/vscode": "^1.36.0",
+		"eslint": "^5.13.0",
+		"glob": "^7.1.4",
+		"mocha": "^6.1.4",
+		"typescript": "^3.3.1",
+		"vscode-test": "^1.0.0-next.0"
+	}
+}
