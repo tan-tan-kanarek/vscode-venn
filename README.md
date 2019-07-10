@@ -41,11 +41,9 @@ Properties reference:
 ```JSON
 {
     "groups": {
-        "AAA": {},
         "BBB": {
             "name": "B B B"
         },
-        "CC": {}
     },
     "items": [ 
         {"name": "test1", "groups": ["AAA"]},
