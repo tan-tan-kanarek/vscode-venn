@@ -61,7 +61,8 @@ Properties reference:
 
 
 *multiple.venn*
-```JSON{
+```JSON
+{
     "charts": [
         {
             "name": "objects",
