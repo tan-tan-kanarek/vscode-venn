@@ -48,7 +48,7 @@ Properties reference:
     "groups": {
         "BBB": {
             "name": "B B B"
-        },
+        }
     },
     "items": [ 
         {"name": "test1", "groups": ["AAA"]},
@@ -61,7 +61,8 @@ Properties reference:
 
 
 *multiple.venn*
-```JSON{
+```JSON
+{
     "charts": [
         {
             "name": "objects",
